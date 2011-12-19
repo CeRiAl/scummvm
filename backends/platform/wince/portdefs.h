@@ -75,6 +75,14 @@
 //#include <direct.h>
 #include <new>
 
+#ifdef WRAP_MALLOC
+extern "C" void *xmalloc(size_t size);
+extern "C" void xfree(void *ptr);
+
+#define malloc xmalloc
+#define free xfree
+#endif
+
 #ifdef __MINGW32CE__
 	void *bsearch(const void *, const void *, size_t, size_t, int (*x)(const void *, const void *));
 #endif
