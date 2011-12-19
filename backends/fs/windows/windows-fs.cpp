@@ -128,7 +128,22 @@ WindowsFilesystemNode::WindowsFilesystemNode(const Common::String &p, const bool
 		_path = path;
 	} else {
 		assert(p.size() > 0);
+#ifndef _WIN32_WCE
 		_path = p;
+#else
+		// Check whether p is a relative path
+		if (p.hasPrefix("\\") || p.hasPrefix("/")) {
+			_path = p;
+		} else {
+			// Add current directory as a prefix to the path
+			// (Windows CE has no concept for relative paths)
+			char path[MAX_PATH];
+			GetCurrentDirectory(MAX_PATH, path);
+			_path = path;
+			_path += '\\';
+			_path += p;
+		}
+#endif
 	}
 
 	_displayName = lastPathComponent(_path, '\\');
